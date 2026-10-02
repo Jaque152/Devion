@@ -4,7 +4,6 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// 1. DEFINIMOS LOS TIPOS ESTRICTOS
 export interface ContactFormState {
   nombre: string;
   correo: string;
@@ -18,7 +17,6 @@ export interface ContactPayload {
   lang: "es" | "en";
 }
 
-// 2. APLICAMOS EL TIPO AL PAYLOAD
 export async function processContact(payload: ContactPayload) {
   try {
     const { form, lang } = payload;
@@ -58,46 +56,68 @@ export async function processContact(payload: ContactPayload) {
 
     const t = texts[lang] || texts["es"];
 
+    // Diseño oscuro Devion
     const emailBody = `
-      <div style="font-family: Arial, sans-serif; max-w: 600px; margin: 0 auto; color: #333;">
-        <h2 style="color: #ce4b2a;">${t.title}</h2>
-        <p>${t.hello} <strong>${form.nombre}</strong>,</p>
-        <p>${t.intro}</p>
-        
-        <h3 style="margin-top: 30px;">${t.details}</h3>
-        <p><strong>${t.name}</strong> ${form.nombre}<br/>
-        <strong>${t.email}</strong> ${form.correo}<br/>
-        <strong>${t.phone}</strong> ${form.telefono || "N/A"}<br/>
-        <strong>${t.subject}</strong> ${form.asunto || "N/A"}<br/>
-        <strong>${t.message}</strong><br/>
-        ${form.mensaje}</p>
+      <div style="font-family: 'Courier New', Courier, monospace; max-width: 600px; margin: 0 auto; background-color: #0A0A0A; color: #FAFAFA; border: 1px solid #00E5FF33; border-radius: 12px; overflow: hidden;">
+        <div style="background: linear-gradient(90deg, #00E5FF 0%, #B026FF 100%); height: 4px; width: 100%;"></div>
+        <div style="padding: 35px 30px;">
+          <h2 style="color: #00E5FF; margin-top: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 1px;">${t.title}</h2>
+          <p style="font-size: 15px; line-height: 1.6; color: #EAEAEA;">${t.hello} <strong style="color: #00E5FF;">${form.nombre}</strong>,</p>
+          <p style="font-size: 14px; line-height: 1.6; color: #A1A1AA;">${t.intro}</p>
+          
+          <h3 style="margin-top: 35px; color: #FAFAFA; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">${t.details}</h3>
+          <div style="font-size: 13px; color: #A1A1AA; line-height: 1.8; background-color: #161616; padding: 20px; border-radius: 8px; border: 1px solid #27272A;">
+            <strong style="color: #71717A;">${t.name}</strong> <span style="color: #FAFAFA;">${form.nombre}</span><br/>
+            <strong style="color: #71717A;">${t.email}</strong> <span style="color: #FAFAFA;">${form.correo}</span><br/>
+            <strong style="color: #71717A;">${t.phone}</strong> <span style="color: #FAFAFA;">${form.telefono || "N/A"}</span><br/>
+            <strong style="color: #71717A;">${t.subject}</strong> <span style="color: #FAFAFA;">${form.asunto || "N/A"}</span><br/>
+            
+            <strong style="color: #71717A; display: block; margin-top: 15px;">${t.message}</strong>
+            <div style="margin-top: 8px; padding-top: 12px; border-top: 1px dashed #3F3F46; color: #EAEAEA; white-space: pre-wrap; font-family: sans-serif; font-size: 14px; line-height: 1.6;">${form.mensaje}</div>
+          </div>
 
-        <p style="margin-top: 30px; font-size: 12px; color: #888;">${t.footer}</p>
+          <div style="margin-top: 45px; padding-top: 25px; border-top: 1px solid #27272A; text-align: center;">
+            <p style="margin: 0; font-size: 10px; color: #71717A; text-transform: uppercase; letter-spacing: 2px;">${t.footer}</p>
+          </div>
+        </div>
       </div>
     `;
 
-    // 3. Envíos paralelos con validación de errores
-    const [clientRes, adminRes] = await Promise.all([
-      resend.emails.send({
+    if (!process.env.RESEND_API_KEY) {
+      console.warn("⚠️ Advertencia: RESEND_API_KEY no está configurada.");
+    }
+
+    try {
+      console.log(`[Contact] Enviando confirmación al cliente: ${form.correo}`);
+      const clientRes = await resend.emails.send({
         from: senderEmail,
         to: form.correo,
         subject: t.subjectClient,
         html: emailBody,
-      }),
-      resend.emails.send({
+      });
+      if (clientRes.error) console.error("❌ Error Resend (Cliente):", clientRes.error);
+      else console.log("✅ Correo cliente enviado exitosamente.");
+    } catch (e) {
+      console.error("❌ Excepción enviando correo a cliente:", e);
+    }
+
+    try {
+      console.log(`[Contact] Enviando alerta al admin: ${adminEmail}`);
+      const adminRes = await resend.emails.send({
         from: senderEmail,
         to: adminEmail,
         subject: t.subjectAdmin,
-        html: `<div style="background-color: #f4ede0; padding: 20px;">${emailBody}</div>`,
-      })
-    ]);
-
-    if (clientRes.error) console.error("❌ Error Resend (Cliente):", clientRes.error);
-    if (adminRes.error) console.error("❌ Error Resend (Admin):", adminRes.error);
+        html: `<div style="background-color: #000000; padding: 30px;">${emailBody}</div>`,
+      });
+      if (adminRes.error) console.error("❌ Error Resend (Admin):", adminRes.error);
+      else console.log("✅ Correo admin enviado exitosamente.");
+    } catch (e) {
+      console.error("❌ Excepción enviando correo a admin:", e);
+    }
 
     return { success: true };
   } catch (error: unknown) {
-    console.error("❌ Error en processContact:", error);
+    console.error("❌ Error general en processContact:", error);
     const errorMessage = error instanceof Error ? error.message : "Ocurrió un error desconocido";
     return { success: false, error: errorMessage };
   }
