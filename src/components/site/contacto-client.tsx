@@ -43,7 +43,7 @@ export function ContactoClient() {
           </p>
 
           <Button asChild className="mt-8 bg-ink-2 border border-clay/30 text-clay hover:bg-clay hover:text-ink transition-colors">
-            <Link href="/pago-personalizado">{t.contactPage.payBtn}</Link>
+            <Link href="/personalizado">{t.contactPage.payBtn}</Link>
           </Button>
 
           <div className="mt-12 space-y-5 border-t border-clay/20 pt-8">
