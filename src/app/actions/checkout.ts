@@ -3,15 +3,12 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-// URL base actualizada para Octano
 const OCTANO_BASE_URL = "https://pagos.octanopayments.com/api/v1";
 
-// 1. FUNCIÓN DE SEGURIDAD PARA PARSEAR LA API DE OCTANO
 async function safeOctanoFetch(url: string, options: RequestInit) {
-  // Configurar cabeceras obligatorias para evitar bloqueos del WAF
   const headers = new Headers(options.headers || {});
   if (!headers.has("User-Agent")) {
-    headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");
+    headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
   }
   if (!headers.has("Origin")) {
     headers.set("Origin", "https://Devion.com.mx");
@@ -21,36 +18,24 @@ async function safeOctanoFetch(url: string, options: RequestInit) {
   const text = await res.text(); 
 
   if (text.trim().startsWith("<")) {
-    console.error(`❌ Octano devolvió HTML (Posible bloqueo de Firewall) [HTTP ${res.status}]:`, text.substring(0, 200));
-    throw new Error("El servidor de pagos bloqueó la conexión.");
+    throw new Error("El servidor de pagos bloqueó la conexión (WAF).");
   }
-
   if (!text || text.trim() === "") {
-    console.error(`❌ Octano devolvió respuesta vacía [HTTP ${res.status}]`);
     throw new Error("Respuesta vacía o nula del servidor de pagos.");
   }
 
   try {
     return JSON.parse(text);
   } catch (error) {
-    console.warn("⚠️ JSON de Octano malformado, intentando reparar...");
     const lastBrace = text.lastIndexOf('}');
     if (lastBrace !== -1) {
-      try {
-        return JSON.parse(text.substring(0, lastBrace + 1));
-      } catch (e) {}
+      try { return JSON.parse(text.substring(0, lastBrace + 1)); } catch (e) {}
     }
-    
-    try {
-      return JSON.parse(text.trim() + '}');
-    } catch (e) {}
-
-    console.error("❌ Octano API devolvió un texto imposible de parsear:", text);
+    try { return JSON.parse(text.trim() + '}'); } catch (e) {}
     throw new Error("Error de comunicación con la pasarela de pagos.");
   }
 }
 
-// 2. DEFINIMOS LOS TIPOS ESTRICTOS
 export interface CheckoutFormState {
   nombre: string;
   apellidos: string;
@@ -91,7 +76,6 @@ export interface CheckoutPayload {
   lang: "es" | "en";
 }
 
-// 3. PROCESAMIENTO DEL PAGO
 export async function processCheckout(payload: CheckoutPayload) {
   try {
     const { form, items, totals, lang } = payload;
@@ -105,21 +89,15 @@ export async function processCheckout(payload: CheckoutPayload) {
       throw new Error("Credenciales de la pasarela no configuradas en el servidor.");
     }
 
-    // A. AUTENTICACIÓN EN OCTANO
-    // Octano requiere estrictamente application/x-www-form-urlencoded
     const authData = await safeOctanoFetch(`${OCTANO_BASE_URL}/signin`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        email: emailStr,    
-        password: passwordStr,
-      }),
+      body: new URLSearchParams({ email: emailStr, password: passwordStr }),
     });
 
     if (!authData.authToken) throw new Error("Error de autenticación con la pasarela.");
     const token = authData.authToken;
 
-    // B. TOKENIZACIÓN DE LA TARJETA
     const expParts = form.exp.split("/");
     const cardData = {
       cardNumber: form.card.replace(/\s/g, ""),
@@ -139,10 +117,9 @@ export async function processCheckout(payload: CheckoutPayload) {
 
     if (!tokenData.cardNumberToken) throw new Error("Error al procesar la tarjeta.");
 
-    // C. PROCESAR LA VENTA
     const salePayload = {
       amount: Math.round(totals.total * 100) / 100,
-      currency: 484, // MXN (Requerido por Octano)
+      currency: 484,
       reference: orderId,
       customerInformation: {
         firstName: form.nombre,
@@ -157,7 +134,7 @@ export async function processCheckout(payload: CheckoutPayload) {
       },
       cardData: {
         cardNumberToken: tokenData.cardNumberToken,
-        cvv: form.cvc.replace(/\s/g, ""), // Limpiamos espacios por seguridad
+        cvv: form.cvc.replace(/\s/g, ""),
       },
       items: items.map((i) => ({
         title: i.product[currentLang].name,
@@ -165,7 +142,7 @@ export async function processCheckout(payload: CheckoutPayload) {
         quantity: i.qty,
         id: String(i.product.id),
       })),
-      redirectUrl: "https://Devion.com.mx/checkout",
+      redirectUrl: "https://devion.com.mx/checkout",
     };
 
     const saleData = await safeOctanoFetch(`${OCTANO_BASE_URL}/sale`, {
@@ -177,7 +154,6 @@ export async function processCheckout(payload: CheckoutPayload) {
       body: JSON.stringify(salePayload),
     });
 
-    // D. EVALUAR RESPUESTA
     if (saleData.status === "DECLINED") {
       return { success: false, error: "Pago declinado. Revisa los fondos o intenta con otra tarjeta." };
     }
@@ -190,8 +166,10 @@ export async function processCheckout(payload: CheckoutPayload) {
       return { success: false, error: "La transacción falló o fue rechazada por el banco." };
     }
 
-    // E. ENVÍO DE CORREOS
+    // ENVÍO DE CORREOS ESPERADO SECUENCIALMENTE
+    console.log(`[Checkout] Pago aprobado. Iniciando envío de correos para orden ${orderId}`);
     await enviarCorreos(orderId, form, items, totals, currentLang);
+    console.log(`[Checkout] Proceso de correos finalizado para orden ${orderId}`);
 
     return { success: true, orderId };
   } catch (error: unknown) {
@@ -244,54 +222,73 @@ async function enviarCorreos(
   
   const itemsListHtml = items.map((i) => `
     <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">${i.qty}x ${i.product[lang].name}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">$${(i.product.priceMXN * i.qty).toFixed(2)} MXN</td>
+      <td style="padding: 12px 0; border-bottom: 1px solid #27272A; color: #FAFAFA;">${i.qty}x ${i.product[lang].name}</td>
+      <td style="padding: 12px 0; border-bottom: 1px solid #27272A; text-align: right; color: #A1A1AA;">$${(i.product.priceMXN * i.qty).toFixed(2)} MXN</td>
     </tr>
   `).join("");
 
+  // Diseño oscuro Devion
   const emailBody = `
-    <div style="font-family: Arial, sans-serif; max-w: 600px; margin: 0 auto; color: #333;">
-      <h2 style="color: #ce4b2a;">${t.title}</h2>
-      <p>${t.hello} <strong>${form.nombre}</strong>,</p>
-      <p>${t.intro}</p>
-      
-      <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-        ${itemsListHtml}
-        <tr>
-          <td style="padding: 10px; font-weight: bold; text-align: right;">${t.totalPaid}</td>
-          <td style="padding: 10px; font-weight: bold; text-align: right; color: #ce4b2a;">$${totals.total.toFixed(2)} MXN</td>
-        </tr>
-      </table>
+    <div style="font-family: 'Courier New', Courier, monospace; max-width: 600px; margin: 0 auto; background-color: #0A0A0A; color: #FAFAFA; border: 1px solid #00E5FF33; border-radius: 12px; overflow: hidden;">
+      <div style="background: linear-gradient(90deg, #00E5FF 0%, #B026FF 100%); height: 4px; width: 100%;"></div>
+      <div style="padding: 35px 30px;">
+        <h2 style="color: #00E5FF; margin-top: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 1px;">${t.title}</h2>
+        <p style="font-size: 15px; line-height: 1.6; color: #EAEAEA;">${t.hello} <strong style="color: #00E5FF;">${form.nombre}</strong>,</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #A1A1AA;">${t.intro}</p>
+        
+        <div style="margin-top: 30px; padding: 20px; background-color: #161616; border: 1px solid #27272A; border-radius: 8px;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            ${itemsListHtml}
+            <tr>
+              <td style="padding: 16px 0 0 0; font-weight: bold; text-align: right; border-top: 1px dashed #3F3F46; color: #71717A; text-transform: uppercase; letter-spacing: 1px;">${t.totalPaid}</td>
+              <td style="padding: 16px 0 0 0; font-weight: bold; text-align: right; color: #00E5FF; font-size: 18px; border-top: 1px dashed #3F3F46;">$${totals.total.toFixed(2)} MXN</td>
+            </tr>
+          </table>
+        </div>
 
-      <h3 style="margin-top: 30px;">${t.clientData}</h3>
-      <p><strong>${t.emailLabel}</strong> ${form.email}<br/>
-      <strong>${t.phoneLabel}</strong> ${form.telefono}<br/>
-      <strong>${t.companyLabel}</strong> ${form.empresa || "N/A"} / ${form.rfc || "N/A"}</p>
+        <h3 style="margin-top: 35px; color: #FAFAFA; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">${t.clientData}</h3>
+        <div style="font-size: 13px; color: #A1A1AA; line-height: 1.8; background-color: #161616; padding: 20px; border-radius: 8px; border: 1px solid #27272A;">
+          <strong style="color: #71717A;">${t.emailLabel}</strong> <span style="color: #FAFAFA;">${form.email}</span><br/>
+          <strong style="color: #71717A;">${t.phoneLabel}</strong> <span style="color: #FAFAFA;">${form.telefono}</span><br/>
+          <strong style="color: #71717A;">${t.companyLabel}</strong> <span style="color: #FAFAFA;">${form.empresa || "N/A"} / ${form.rfc || "N/A"}</span>
+        </div>
 
-      <p style="margin-top: 30px; font-size: 12px; color: #888;">${t.footer}</p>
+        <div style="margin-top: 45px; padding-top: 25px; border-top: 1px solid #27272A; text-align: center;">
+          <p style="margin: 0; font-size: 10px; color: #71717A; text-transform: uppercase; letter-spacing: 2px;">${t.footer}</p>
+        </div>
+      </div>
     </div>
   `;
 
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("⚠️ Advertencia: RESEND_API_KEY no está configurada.");
+  }
+
   try {
-    const [clientRes, adminRes] = await Promise.all([
-      resend.emails.send({
-        from: senderEmail,
-        to: form.email,
-        subject: t.subjectClient,
-        html: emailBody,
-      }),
-      resend.emails.send({
-        from: senderEmail,
-        to: adminEmail,
-        subject: t.subjectAdmin,
-        html: `<div style="background-color: #f4ede0; padding: 20px;">${emailBody}</div>`,
-      })
-    ]);
-
+    console.log(`[Checkout Email] Enviando a cliente: ${form.email}`);
+    const clientRes = await resend.emails.send({
+      from: senderEmail,
+      to: form.email,
+      subject: t.subjectClient,
+      html: emailBody,
+    });
     if (clientRes.error) console.error("❌ Error Resend (Cliente):", clientRes.error);
-    if (adminRes.error) console.error("❌ Error Resend (Admin):", adminRes.error);
-
+    else console.log("✅ Correo cliente enviado exitosamente.");
   } catch (err) {
-    console.error("❌ Excepción en ejecución de Resend:", err);
+    console.error("❌ Excepción enviando a cliente:", err);
+  }
+
+  try {
+    console.log(`[Checkout Email] Enviando a admin: ${adminEmail}`);
+    const adminRes = await resend.emails.send({
+      from: senderEmail,
+      to: adminEmail,
+      subject: t.subjectAdmin,
+      html: `<div style="background-color: #000000; padding: 30px;">${emailBody}</div>`,
+    });
+    if (adminRes.error) console.error("❌ Error Resend (Admin):", adminRes.error);
+    else console.log("✅ Correo admin enviado exitosamente.");
+  } catch (err) {
+    console.error("❌ Excepción enviando a admin:", err);
   }
 }
