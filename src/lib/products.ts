@@ -24,7 +24,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 19390.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Web para Restaurantes',
       description:
@@ -56,7 +56,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 24530.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Marca + Sitio Web Profesional',
       description:
@@ -88,7 +88,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 21940.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Web + Marketing Digital',
       description:
@@ -120,7 +120,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 4250.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Landing Page Emprendedor',
       description:
@@ -152,7 +152,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 17320.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Web Empresarial',
       description:
@@ -184,7 +184,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 16520.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Web + SEO Inicial',
       description:
@@ -216,7 +216,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 11370.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Sitio Web Profesional',
       description:
@@ -246,7 +246,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 25600.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Tienda en Línea Básica',
       description:
@@ -278,7 +278,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 7420.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Presencia Digital Básica',
       description:
@@ -308,7 +308,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 12770.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Web para Profesionistas',
       description:
@@ -338,7 +338,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 48820.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Portal Inmobiliario',
       description:
@@ -370,7 +370,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 64680.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Ecommerce Avanzado',
       description:
@@ -402,7 +402,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 51890.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Portal de Empleo',
       description:
@@ -434,7 +434,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 41780.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Ecommerce Profesional',
       description:
@@ -466,7 +466,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 29840.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Identidad Digital Emprendedor',
       description:
@@ -506,7 +506,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 33760.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Branding + Web Empresarial',
       description:
@@ -540,7 +540,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 47800.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Plataforma de Cursos Online',
       description:
@@ -570,7 +570,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 28580.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Plan Web Corporativo Premium',
       description:
@@ -636,7 +636,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 1890.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Soporte Técnico Remoto Básico',
       description:
@@ -666,7 +666,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 1350.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Configuración Inicial de Herramientas',
       description:
@@ -698,7 +698,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 510.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Servicio Express de Resolución de Dudas',
       description:
@@ -730,7 +730,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 890.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Diagnóstico de Problemas Digitales',
       description:
@@ -762,7 +762,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 310.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Asesoría Digital Básica',
       description:
@@ -794,7 +794,7 @@ export const webPlans: ProductPlan[] = [
     priceMXN: 180.00,
     taxIncluded: false,
     currency: 'MXN + IVA',
-    imageUrl: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&w=1200&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=85',
     es: {
       name: 'Consulta Digital Rápida',
       description:
