@@ -363,8 +363,8 @@ export function CheckoutClient() {
                 Pago encriptado y seguro
               </div>
               <img 
-                src="/logo-octano-2.png" 
-                alt="Procesado por Octano Payments" 
+                src="/logo-keycop-2.png" 
+                alt="Procesado por Keycop Payments" 
                 className="h-[30px] object-contain opacity-80 mix-blend-multiply" 
               />
             </div>
