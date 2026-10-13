@@ -3,9 +3,9 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const OCTANO_BASE_URL = "https://pagos.octanopayments.com/api/v1";
+const KEYCOP_BASE_URL = "https://api.keycop.com/v1";
 
-async function safeOctanoFetch(url: string, options: RequestInit) {
+async function safeKeycopFetch(url: string, options: RequestInit) {
   const headers = new Headers(options.headers || {});
   if (!headers.has("User-Agent")) {
     headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
@@ -18,7 +18,7 @@ async function safeOctanoFetch(url: string, options: RequestInit) {
   const text = await res.text(); 
 
   if (text.trim().startsWith("<")) {
-    throw new Error("El servidor de pagos bloqueó la conexión (WAF).");
+    throw new Error("El servidor de pagos de Keycop bloqueó la conexión (WAF).");
   }
   if (!text || text.trim() === "") {
     throw new Error("Respuesta vacía o nula del servidor de pagos.");
@@ -82,14 +82,15 @@ export async function processCheckout(payload: CheckoutPayload) {
     const orderId = `PC-${Math.floor(100000 + Math.random() * 899999)}`;
     const currentLang = lang || "es";
 
-    const emailStr = process.env.OCTANO_EMAIL;
-    const passwordStr = process.env.OCTANO_PASSWORD;
+    // Variables de entorno actualizadas a Keycop
+    const emailStr = process.env.KEYCOP_EMAIL;
+    const passwordStr = process.env.KEYCOP_PASSWORD;
 
     if (!emailStr || !passwordStr) {
       throw new Error("Credenciales de la pasarela no configuradas en el servidor.");
     }
 
-    const authData = await safeOctanoFetch(`${OCTANO_BASE_URL}/signin`, {
+    const authData = await safeKeycopFetch(`${KEYCOP_BASE_URL}/signin`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ email: emailStr, password: passwordStr }),
@@ -106,7 +107,7 @@ export async function processCheckout(payload: CheckoutPayload) {
       expirationYear: `20${expParts[1].trim()}`,
     };
 
-    const tokenData = await safeOctanoFetch(`${OCTANO_BASE_URL}/card/tokenizer`, {
+    const tokenData = await safeKeycopFetch(`${KEYCOP_BASE_URL}/card/tokenizer`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -119,7 +120,7 @@ export async function processCheckout(payload: CheckoutPayload) {
 
     const salePayload = {
       amount: Math.round(totals.total * 100) / 100,
-      currency: 484,
+      currency: 484, // MXN
       reference: orderId,
       customerInformation: {
         firstName: form.nombre,
@@ -145,7 +146,7 @@ export async function processCheckout(payload: CheckoutPayload) {
       redirectUrl: "https://devion.com.mx/checkout",
     };
 
-    const saleData = await safeOctanoFetch(`${OCTANO_BASE_URL}/sale`, {
+    const saleData = await safeKeycopFetch(`${KEYCOP_BASE_URL}/sale`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -167,7 +168,7 @@ export async function processCheckout(payload: CheckoutPayload) {
     }
 
     // ENVÍO DE CORREOS ESPERADO SECUENCIALMENTE
-    console.log(`[Checkout] Pago aprobado. Iniciando envío de correos para orden ${orderId}`);
+    console.log(`[Checkout] Pago aprobado en Keycop. Iniciando envío de correos para orden ${orderId}`);
     await enviarCorreos(orderId, form, items, totals, currentLang);
     console.log(`[Checkout] Proceso de correos finalizado para orden ${orderId}`);
 
