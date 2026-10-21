@@ -117,7 +117,7 @@ export function ProductCard({
                         {t.store.cardTotalIva}
                       </span>
                       <span className="display text-2xl font-bold text-cream-paper">
-                        {formatMXN(product.priceMXN * (1 + IVA_RATE))} <span className="text-lg text-clay">MXN</span>
+                        {formatMXN(product.priceMXN)} <span className="text-lg text-clay">MXN</span>
                       </span>
                     </div>
                     <Button
